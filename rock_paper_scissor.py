@@ -10,7 +10,7 @@ hands = mp_hands.Hands(max_num_hands=1)
 mp_draw = mp.solutions.drawing_utils
 
 # Choices
-choices = ["rock", "paper", "scissors"]
+choices = ["rock", "paper", "scissor"]
 score_player = 0
 score_computer = 0
 last_choice = None
@@ -45,6 +45,35 @@ def classify_gesture(landmarks):
             return "scissors"
     return None
 
+# Function to draw attractive scoreboard
+def draw_scoreboard(frame, score_player, score_computer):
+    height, width, _ = frame.shape
+
+    # Background rectangle
+    cv2.rectangle(frame, (0, 0), (width, 60), (50, 50, 50), -1)
+
+    # Leading color
+    if score_player > score_computer:
+        player_color = (0, 255, 0)  # green
+        comp_color = (0, 0, 255)    # red
+    elif score_computer > score_player:
+        player_color = (0, 0, 255)  # red
+        comp_color = (0, 255, 0)    # green
+    else:
+        player_color = comp_color = (255, 255, 0)  # yellow
+
+    # Shadow effect for text
+    cv2.putText(frame, f"YOU: {score_player}", (20, 40), cv2.FONT_HERSHEY_SIMPLEX,
+                1, (0, 0, 0), 4, cv2.LINE_AA)
+    cv2.putText(frame, f"COMPUTER: {score_computer}", (width - 300, 40),
+                cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 4, cv2.LINE_AA)
+
+    # Foreground colored text
+    cv2.putText(frame, f"YOU: {score_player}", (20, 40), cv2.FONT_HERSHEY_SIMPLEX,
+                1, player_color, 2, cv2.LINE_AA)
+    cv2.putText(frame, f"COMPUTER: {score_computer}", (width - 300, 40),
+                cv2.FONT_HERSHEY_SIMPLEX, 1, comp_color, 2, cv2.LINE_AA)
+
 # Webcam
 cap = cv2.VideoCapture(0)
 
@@ -67,8 +96,11 @@ while True:
     elapsed = time.time() - countdown_start
     remaining = countdown_seconds - int(elapsed)
 
+    # Draw scoreboard at top
+    draw_scoreboard(frame, score_player, score_computer)
+
     if remaining > 0:
-        # Show countdown number
+        # Show countdown number in center
         cv2.putText(frame, str(remaining), (250, 250), cv2.FONT_HERSHEY_SIMPLEX,
                     4, (0, 255, 255), 6, cv2.LINE_AA)
     else:
@@ -94,10 +126,6 @@ while True:
 
         # Show result for 2 seconds
         if playing and time.time() - show_result_time < 2:
-            cv2.putText(frame, f"You: {last_choice[0]}", (10, 40),
-                        cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
-            cv2.putText(frame, f"Score - You: {score_player}  Comp: {score_computer}",
-                        (10, 80), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2)
             if last_choice:
                 comp_img = img_assets[last_choice[1]]
                 if comp_img is not None:
