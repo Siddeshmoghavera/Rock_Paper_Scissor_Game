@@ -10,7 +10,7 @@ hands = mp_hands.Hands(max_num_hands=1)
 mp_draw = mp.solutions.drawing_utils
 
 # Choices
-choices = ["rock", "paper", "scissor"]
+choices = ["rock", "paper", "scissors"]
 score_player = 0
 score_computer = 0
 last_choice = None
