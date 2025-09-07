@@ -15,7 +15,7 @@ score_player = 0
 score_computer = 0
 last_choice = None
 countdown_start = time.time()
-countdown_seconds = 4
+countdown_seconds = 3
 playing = False
 
 # Load computer choice images
